@@ -3,11 +3,12 @@ var router = express.Router();
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
-
 var Media = require('../models/media');
+const uploadDir = path.join(__dirname,'../uploads/');
 
 var store = multer.diskStorage({
     destination:function(req,file,cb){
@@ -107,6 +108,72 @@ router.post('/', function(req,res,next){
 //         return res.status(200).json(files);
 //     });
 // });
+
+router.delete('/files/:id', function(req, res, next) {
+    var decoded = jwt.decode(req.header('Authorization'));        
+    if(!decoded){
+        return res.status(401).json({
+            title: 'Not Authenticated',
+            error: {message: 'Invalid Token!'}
+        });
+    }
+
+    
+    Media.findOne({_id:req.params.id}, function(err, media) {
+        console.log('err 1:', err);
+        if (err) {
+            return res.status(500).json({
+                title: 'An error occurred',
+                error: err
+            });
+        }
+        if(!Boolean(media)){
+            return res.status(400).json({
+                title: 'Media does not exist',
+                error: null
+            });
+        }
+        fs.unlink(uploadDir+media.uploadfileName,(err)=>{
+            console.log('err 2:', err);
+            if(err){                
+                return res.status(500).json({
+                    title: 'An error occurred',
+                    error: err
+                });
+            } else {
+                Media.remove({ _id: media.id }, function(err,result){
+                    console.log('err 3:', err);
+                    if (err) {
+                        return res.status(500).json({
+                            title: 'An error occurred',
+                            error: err
+                        });
+                    } else {
+                        return res.status(200).json({
+                            message: 'File delete success'
+                        });
+                    }
+                });            
+            }
+        });
+    });
+    // uploadfileName
+    // Media.remove({ _id: req.params.id }, function(err,result){
+    //     if (err) {
+    //         return res.status(500).json({
+    //             title: 'An error occurred',
+    //             error: err
+    //         });
+    //     }
+    //     //Unlink the file
+    //     // fs.unlink(lib.baseDir+dir+'/'+filename+'.json',(err)=>{
+    //     //     callback(err);
+    //     // });
+    //     res.status(200).json({
+    //         data: result
+    //     });
+    // });
+});
 
 router.get('/download/:filename', function(req,res,next){
     if(req.params.filename){

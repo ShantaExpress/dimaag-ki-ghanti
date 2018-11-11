@@ -33,6 +33,7 @@ router.get('/', function(req, res, next) {
   });
   
 });
+
 router.get('/:id', function(req, res, next) {
     var decoded = jwt.decode(req.header('Authorization'));        
     if(!decoded){
@@ -62,7 +63,8 @@ router.delete('/:id', function(req, res, next) {
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
         });
-    } 
+    }
+    
     User.remove({ _id: req.params.id }, function(err,result){
         if (err) {
             return res.status(500).json({
@@ -230,6 +232,7 @@ router.post('/logout',function(req,res,next){
 
 router.get('/logged/user',function(req,res,next){
     var decoded = jwt.decode(req.header('Authorization'));
+    console.log('decoded:', decoded);
     if(!decoded){
         return res.status(401).json({
             title: 'Not Authenticated',
