@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 var Media = require('../models/media');
 const uploadDir = path.join(__dirname,'../uploads/');
+let logger = require('../utils/logger');
 
 var store = multer.diskStorage({
     destination:function(req,file,cb){
@@ -23,7 +24,7 @@ var store = multer.diskStorage({
 var upload = multer({storage:store}).single('file');
 
 router.get('/', function(req, res, next) {
-    
+    logger.info('in get call of Media');
     var decoded = jwt.decode(req.header('Authorization'));        
     if(!decoded){
         return res.status(401).json({
@@ -120,7 +121,7 @@ router.delete('/files/:id', function(req, res, next) {
 
     
     Media.findOne({_id:req.params.id}, function(err, media) {
-        console.log('err 1:', err);
+        logger.info('err 1:', err);        
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -133,22 +134,25 @@ router.delete('/files/:id', function(req, res, next) {
                 error: null
             });
         }
+        logger.info('media exist : ' + JSON.stringify(media));
         fs.unlink(uploadDir+media.uploadfileName,(err)=>{
-            console.log('err 2:', err);
+            logger.info('err 2:' +  err);
             if(err){                
                 return res.status(500).json({
                     title: 'An error occurred',
                     error: err
                 });
             } else {
+                logger.info('Media unlinked success');
                 Media.remove({ _id: media.id }, function(err,result){
-                    console.log('err 3:', err);
+                    logger.info('err 3:' + err);
                     if (err) {
                         return res.status(500).json({
                             title: 'An error occurred',
                             error: err
                         });
                     } else {
+                        logger.info('Media removed success : ' + JSON.stringify(result));
                         return res.status(200).json({
                             message: 'File delete success'
                         });
@@ -177,14 +181,14 @@ router.delete('/files/:id', function(req, res, next) {
 
 router.get('/download/:filename', function(req,res,next){
     if(req.params.filename){
-        console.log('over here filename:', req.params.filename);
+        logger.info('over here filename:', req.params.filename);
     }    
     filepath = path.join(__dirname,'../uploads') +'/'+ req.params.filename;
     res.sendFile(filepath);
 });
 router.post('/download/:filename', function(req,res,next){
     if(req.params.filename){
-        console.log('over here filename:', req.params.filename);
+        logger.info('over here filename:', req.params.filename);
     }
     
     // res.status(200).json({

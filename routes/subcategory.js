@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
+let logger = require('../utils/logger');
 
 var SubCategory = require('../models/subCategory');
 var Category = require('../models/category');
@@ -65,7 +66,7 @@ router.delete('/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    SubCategory.remove({ _id: req.params.id }, function(err,result){
+    SubCategory.remove({ _id: { $in : req.params.id.split(',') }}, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',

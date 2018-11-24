@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-
+let logger = require('../utils/logger');
 var Category = require('../models/category');
 /* GET categories listing. */
 router.get('/', function(req, res, next) {
@@ -32,6 +32,7 @@ router.get('/', function(req, res, next) {
   });
   
 });
+
 router.get('/:id', function(req, res, next) {
     
     var decoded = jwt.decode(req.header('Authorization'));        
@@ -64,7 +65,7 @@ router.delete('/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    Category.remove({ _id: req.params.id }, function(err,result){
+    Category.remove({ _id: { $in : req.params.id.split(',') }}, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',

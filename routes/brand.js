@@ -7,14 +7,16 @@ const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-
+let logger = require('../utils/logger');
 var SubCategory = require('../models/subCategory');
 var Category = require('../models/category');
 var Brand = require('../models/brand');
 /* GET subCategories listing. */
 router.get('/', function(req, res, next) {
-    
-    var decoded = jwt.decode(req.header('Authorization'));        
+    logger.info('in get Brands');
+    var decoded = jwt.decode(req.header('Authorization'));
+    logger.info('decoded: ' + JSON.stringify(decoded));
+
     if(!decoded){
         return res.status(401).json({
             title: 'Not Authenticated',
@@ -60,6 +62,7 @@ router.get('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
     
+    logger.info('*************************************************************** ' + req.params.id);
     var decoded = jwt.decode(req.header('Authorization'));        
     if(!decoded){
         return res.status(401).json({
@@ -67,7 +70,9 @@ router.delete('/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    Brand.remove({ _id: req.params.id }, function(err,result){
+    logger.info('in delete where id is : ' + req.params.id);
+
+    Brand.remove({ _id: { $in : req.params.id.split(',') }}, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -77,7 +82,7 @@ router.delete('/:id', function(req, res, next) {
         res.status(200).json({
             data: result
         });
-    });    
+    });
   
 });
 

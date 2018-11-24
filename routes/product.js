@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
+let logger = require('../utils/logger');
 
 var SubCategory = require('../models/subCategory');
 var SectionalCategory = require('../models/sectionalCategory');
@@ -87,7 +88,7 @@ router.delete('/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    Product.remove({ _id: req.params.id }, function(err,result){
+    Product.remove({ _id: { $in : req.params.id.split(',') }}, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -181,7 +182,7 @@ router.post('/', function (req, res, next) {
             //     result: results
             // });
         }).catch(function(err){
-            console.log(err); 
+            logger.error(err); 
             return res.status(500).json({
                 error: err
             });
@@ -221,20 +222,7 @@ router.put('/:id', function (req, res, next) {
     var subCategory_id = typeof(req.body.subCategory_id) == 'string' && req.body.subCategory_id.trim().length>0?req.body.subCategory_id.trim():false;
     var sectionalCategory_id = typeof(req.body.sectionalCategory_id) == 'string' && req.body.sectionalCategory_id.trim().length>0?req.body.sectionalCategory_id.trim():false;
     var brand_id = typeof(req.body.brand_id) == 'string' && req.body.brand_id.trim().length>0?req.body.brand_id.trim():false;
-    console.log('the mandatory fields are : ', (true && manufacturer && seller && category_id && 
-        subCategory_id && sectionalCategory_id && brand_id));
-        console.log('id: ', id);
-        console.log('name: ', name);
-        console.log('isEnabled: ', isEnabled);
-        console.log('url: ', url);
-        console.log('basePrice: ', basePrice);
-        console.log('description: ', description);
-        console.log('manufacturer: ', manufacturer);
-        console.log('seller: ', seller);
-        console.log('category_id: ', category_id);
-        console.log('subCategory_id: ', subCategory_id);
-        console.log('sectionalCategory_id: ', sectionalCategory_id);
-        console.log('brand_id: ', brand_id);
+    
     if(id && name && url && basePrice && description && manufacturer && seller && category_id && 
         subCategory_id && sectionalCategory_id && brand_id){
         var promises = [
@@ -247,7 +235,7 @@ router.put('/:id', function (req, res, next) {
           
         Promise.all(promises).then(function(results) {
             if(results && results.length){
-                console.log('results: ', results);
+                logger.info('results: '+ JSON.stringify(results));
                 var product = results[4];
                 product.name = name;
                 product.identifier = identifier;
@@ -284,7 +272,7 @@ router.put('/:id', function (req, res, next) {
                 });
             }
         }).catch(function(err){
-            console.log(err); 
+            logger.error(err); 
             return res.status(500).json({
                 error: err
             });

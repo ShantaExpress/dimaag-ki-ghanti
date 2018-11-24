@@ -8,6 +8,7 @@ const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 
+let logger = require('../utils/logger');
 var Address = require('../models/address');
 /* GET addresses listing. */
 router.get('/', function(req, res, next) {
@@ -19,7 +20,7 @@ router.get('/', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    console.log('in get api: ' , Address);
+    logger.info('in get api of Address');
    Address.find({}, function(err, addresses) {
       if (err) {
           return res.status(500).json({
@@ -42,7 +43,7 @@ router.get('/id/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    console.log('in get api: ' , Address);
+    logger.info('in get api of Address with id: ' + req.params.id);
    Address.findOne({_id:req.params.id}, function(err, address) {
       if (err) {
           return res.status(500).json({
@@ -66,8 +67,8 @@ router.delete('/remove/:id', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    console.log('in get api: ' , req.params.id);
-    Address.remove({ _id: req.params.id }, function(err,result){
+    logger.info('in delete api: ' + req.params.id);
+    Address.remove({ _id: { $in : req.params.id.split(',') } }, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -90,7 +91,7 @@ router.post('/', function (req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    console.log('in post api');
+    logger.info('in Address post api : ' + JSON.stringify(req.body));
     var address = new Address({
         addressLine1: req.body.addressLine1,
         addressLine2: req.body.addressLine2,
@@ -123,7 +124,7 @@ router.put('/:id', function (req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    console.log('in post api');
+    logger.info('in post api');
      Address.updateOne(
         {"_id":req.params.id},
         {$set:{           

@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
+let logger = require('../utils/logger');
 
 var User = require('../models/user');
 
@@ -65,7 +66,7 @@ router.delete('/:id', function(req, res, next) {
         });
     }
     
-    User.remove({ _id: req.params.id }, function(err,result){
+    User.remove({ _id: { $in : req.params.id.split(',') } }, function(err,result){
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -112,11 +113,11 @@ router.post('/', function (req, res, next) {
                 // user.findSimilarUserTypes(function(err, users) {
                 //     console.log(users); // woof
                 // });
-                console.log('fullName : ' , result1.fullName);
+                logger.info('fullName : ' + result1.fullName);
                 User.findByName('Admin', function(err, users) {
-                    console.log(users);
+                    logger.info(JSON.stringify(users));
                 });
-                console.log(result1.speak());
+                logger.info(result1.speak());
                 return res.status(201).json({
                     message: 'User created',
                     obj: {
@@ -183,8 +184,10 @@ router.put('/:id', function (req, res, next) {
 });
 
 router.post('/admin-signin', function(req, res, next) {
-    console.log('in signin method: ',req.header('Content-Type'));
+    logger.info('in signin method: ' + JSON.stringify(req.body));
     User.findOne({email: req.body.email}, function(err, user) {
+        logger.info('err : ' + JSON.stringify(err));
+        logger.info('user : ' + JSON.stringify(user));
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -205,7 +208,7 @@ router.post('/admin-signin', function(req, res, next) {
         }
         
         token = jwt.sign({user: user}, 'secret', {expiresIn: 7200});
-        console.log('-------------signed in----------------------');
+        logger.info('-------------signed in----------------------');
         
         res.status(200).json({
             message: 'Successfully logged in',
@@ -232,7 +235,7 @@ router.post('/logout',function(req,res,next){
 
 router.get('/logged/user',function(req,res,next){
     var decoded = jwt.decode(req.header('Authorization'));
-    console.log('decoded:', decoded);
+    logger.info('decoded:' + JSON.stringify(decoded));
     if(!decoded){
         return res.status(401).json({
             title: 'Not Authenticated',
