@@ -13,6 +13,8 @@ var sectionalCategoryRouter = require('./routes/sectionalCategory');
 var brandRouter = require('./routes/brand');
 var productRouter = require('./routes/product');
 var mediaRouter = require('./routes/media');
+var publicRouter = require('./routes/publicApi');
+
 var conn = require('./mongoConnection').conn;
 var app = express();
 //app.use(cors());
@@ -66,6 +68,7 @@ app.use('/api/sectionalCategory', sectionalCategoryRouter);
 app.use('/api/brand', brandRouter);
 app.use('/api/product', productRouter);
 app.use('/api/media', mediaRouter);
+app.use('/api/public', publicRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
