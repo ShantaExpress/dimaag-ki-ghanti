@@ -3,7 +3,7 @@ let logger;
 
 function getTimeStamp(){
   var date = new Date();
-  var op = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;//_${date.getHours()}.${date.getMinutes()}`;
+  var op = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;//_${date.getHours()}.${date.getMinutes()}`;
   return op;
 }
 

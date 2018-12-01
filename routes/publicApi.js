@@ -14,6 +14,7 @@ var SectionalCategory = require('../models/sectionalCategory');
 var Media = require('../models/media');
 var User = require('../models/user');
 var Brand = require('../models/brand');
+var Product = require('../models/product');
 const uploadDir = path.join(__dirname,'../uploads/');
 
 const Models = {
@@ -24,11 +25,11 @@ const Models = {
     'Brand': Brand,
     'Media': Media
 }
-/* GET categories listing. */
+/* GET listing of generic api */
 router.get('/get/:api', function(req, res, next) {
     // req.params.api
     let model;
-    if(!req.params.api || ['Category', 'SubCategory', 'User', 'Media', 'SectionalCategory', 'Brand'].indexOf(req.params.api) == -1){        
+    if(!req.params.api || ['Category', 'SubCategory', 'User', 'Media', 'SectionalCategory', 'Brand', 'Product'].indexOf(req.params.api) == -1){        
         res.status(400).json({
             error: 'Invalid Api'
         });
@@ -48,6 +49,38 @@ router.get('/get/:api', function(req, res, next) {
   
 });
 
+/* get heading listing */
+router.get('/getHeaders', function(req, res, next){
+    var promises = [
+        Category.find({'isEnabled': true}).exec(),
+        SubCategory.find({'isEnabled': true}).exec(),
+        SectionalCategory.find({'isEnabled': true}).exec(),
+        Brand.find({'isEnabled': true}).exec()
+    ];
+      
+    Promise.all(promises).then(function(results) {
+        if(results && results.length){
+            let modResults = JSON.parse(JSON.stringify(results));
+            let [cats, subCats, sectCats, brands] = modResults;
+            subCats = linkParentChild(subCats, sectCats, 'sectionalCategories', 'subCategory_id');
+            cats = linkParentChild(cats, subCats, 'subCategories', 'category_id');
+            res.status(200).json({
+                data: cats
+            });
+        }
+    });
+});
 
+function linkParentChild (parent, children, childName, parentName) {
+    for (var i = 0; i < parent.length; i++) {
+        parent[i][childName] = [];
+        for (var j = 0; j < children.length; j++) {
+            if (children[j][parentName].toString() === parent[i]._id.toString()){
+                parent[i][childName].push(children[j]);
+            }
+        }
+    }
+    return parent;
+}
 
 module.exports = router;
