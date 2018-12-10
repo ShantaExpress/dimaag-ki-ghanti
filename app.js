@@ -14,6 +14,7 @@ var brandRouter = require('./routes/brand');
 var productRouter = require('./routes/product');
 var mediaRouter = require('./routes/media');
 var publicRouter = require('./routes/publicApi');
+var bannerRouter = require('./routes/banner');
 
 var conn = require('./mongoConnection').conn;
 var app = express();
@@ -69,6 +70,7 @@ app.use('/api/brand', brandRouter);
 app.use('/api/product', productRouter);
 app.use('/api/media', mediaRouter);
 app.use('/api/public', publicRouter);
+app.use('/api/banner', bannerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

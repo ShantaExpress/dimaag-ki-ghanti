@@ -15,6 +15,7 @@ var Media = require('../models/media');
 var User = require('../models/user');
 var Brand = require('../models/brand');
 var Product = require('../models/product');
+var Banner = require('../models/banner');
 const uploadDir = path.join(__dirname,'../uploads/');
 
 const Models = {
@@ -23,19 +24,22 @@ const Models = {
     'SectionalCategory': SectionalCategory,
     'User': User,
     'Brand': Brand,
-    'Media': Media
+    'Media': Media,
+    'Banner': Banner
 }
 /* GET listing of generic api */
 router.get('/get/:api', function(req, res, next) {
     // req.params.api
     let model;
-    if(!req.params.api || ['Category', 'SubCategory', 'User', 'Media', 'SectionalCategory', 'Brand', 'Product'].indexOf(req.params.api) == -1){        
+    if(!req.params.api || Object.keys(Models).indexOf(req.params.api) == -1){        
         res.status(400).json({
             error: 'Invalid Api'
         });
     }
-    
-    Models[req.params.api].find({'isEnabled': true}, function(err, data) {
+    let findQuery = req.query;
+    findQuery.isEnabled = true;
+    console.log('query => ', findQuery);
+    Models[req.params.api].find(findQuery, function(err, data) {
       if (err) {
           return res.status(500).json({
               title: 'An error occurred',
@@ -48,6 +52,12 @@ router.get('/get/:api', function(req, res, next) {
   });
   
 });
+
+/* get banner */
+// router.get('/getBanner/:context', function(req, res, next) {
+//     const context = req.params.context;
+//     Banner.find({'': context})
+// });
 
 /* get heading listing */
 router.get('/getHeaders', function(req, res, next){
