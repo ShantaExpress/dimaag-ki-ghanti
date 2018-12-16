@@ -128,6 +128,7 @@ router.post('/', function (req, res, next) {
     var subCategory_id = typeof(req.body.subCategory_id) == 'string' && req.body.subCategory_id.trim().length>0?req.body.subCategory_id.trim():false;
     var sectionalCategory_id = typeof(req.body.sectionalCategory_id) == 'string' && req.body.sectionalCategory_id.trim().length>0?req.body.sectionalCategory_id.trim():false;
     var brand_id = typeof(req.body.brand_id) == 'string' && req.body.brand_id.trim().length>0?req.body.brand_id.trim():false;
+    var tags = typeof(req.body.tags) == 'object' && req.body.tags instanceof Array &&req.body.tags.length ? req.body.tags:[];
     
     if(name && url && basePrice && description && manufacturer && seller && category_id && subCategory_id && sectionalCategory_id && brand_id){
         var promises = [
@@ -152,12 +153,13 @@ router.post('/', function (req, res, next) {
                         return res.status(500).json({
                             title: 'An error occurred 2',
                             error: {message: 'Product with name '+name+' already exists'}
+       
                         });
                     }
 
                     
                     var product = new Product({name, identifier, isEnabled, url, basePrice,quantity, discount,
-                                 description, specification, manufacturer, seller, image_id, category_id, subCategory_id, sectionalCategory_id, brand_id});
+                                 description, specification, manufacturer, seller, image_id, category_id, subCategory_id, sectionalCategory_id, brand_id, tags});
                     product.save(function(err, productSafed) {
                         if (err) {
                             return res.status(500).json({
@@ -222,6 +224,7 @@ router.put('/:id', function (req, res, next) {
     var subCategory_id = typeof(req.body.subCategory_id) == 'string' && req.body.subCategory_id.trim().length>0?req.body.subCategory_id.trim():false;
     var sectionalCategory_id = typeof(req.body.sectionalCategory_id) == 'string' && req.body.sectionalCategory_id.trim().length>0?req.body.sectionalCategory_id.trim():false;
     var brand_id = typeof(req.body.brand_id) == 'string' && req.body.brand_id.trim().length>0?req.body.brand_id.trim():false;
+    var tags = typeof(req.body.tags) == 'object' && req.body.tags instanceof Array &&req.body.tags.length ? req.body.tags:[];
     
     if(id && name && url && basePrice && description && manufacturer && seller && category_id && 
         subCategory_id && sectionalCategory_id && brand_id){
@@ -253,7 +256,7 @@ router.put('/:id', function (req, res, next) {
                 product.subCategory_id = subCategory_id;
                 product.sectionalCategory_id = sectionalCategory_id;
                 product.brand_id = brand_id;
-                
+                product.tags = tags;
                 product.save(function(err, productSaved) {
                     if (err) {
                         return res.status(500).json({
