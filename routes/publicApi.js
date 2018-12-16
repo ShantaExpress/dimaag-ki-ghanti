@@ -25,7 +25,8 @@ const Models = {
     'User': User,
     'Brand': Brand,
     'Media': Media,
-    'Banner': Banner
+    'Banner': Banner,
+    'Product': Product
 }
 /* GET listing of generic api */
 router.get('/get/:api', function(req, res, next) {
@@ -51,6 +52,31 @@ router.get('/get/:api', function(req, res, next) {
       });
   });
   
+});
+
+/* get page settings */
+router.get('/settings/:page', function(req,res,next){
+    const page = req.params.page;
+    let setting = {};
+    switch(page) {
+        case 'home' : 
+            setting.showTopCarousel = true;
+            setting.miscellaneous = [
+                {   header : 'New Arrivals',
+                    selectionTag: '5c14afcfad23910db4d14dba',
+                },
+                {   header : 'Your Recently Viewed Item',
+                    selectionTag: '5c14b038ad23910db4d14dbc',
+                }
+            ];
+            break;
+        default:
+            console.log('in default');
+    }
+
+    return res.status(200).json({
+        data: setting
+    });
 });
 
 /* get banner */
