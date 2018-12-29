@@ -95,8 +95,8 @@ router.post('/', function (req, res, next) {
     var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var category_id = typeof(req.body.category_id) == 'string' && req.body.category_id.trim().length>0?req.body.category_id.trim():false;
-       
-    if(name && identifier && url && category_id){
+    var imageName = typeof(req.body.imageName) == 'string' && req.body.imageName.trim().length>0?req.body.imageName.trim():'';
+    if(name && identifier && category_id){
          
         var thename =  '^'+name.trim()+'$';
         // db.collection.find({'name': });
@@ -116,7 +116,14 @@ router.post('/', function (req, res, next) {
             else{
                 Category.findById(category_id,(err,category)=>{
                     if(!err && category){
-                        var subCategory = new SubCategory({name,identifier,isEnabled,url,category_id});            
+                        var subCategory = new SubCategory({
+                            name,
+                            identifier,
+                            isEnabled,
+                            url: ( url ? url : '/' + identifier),
+                            category_id,
+                            imageName
+                        });            
                         
                         subCategory.save(function(err, result) {
                             if (err) {
@@ -161,15 +168,17 @@ router.put('/:id', function (req, res, next) {
     var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var category_id = typeof(req.body.category_id) == 'string' && req.body.category_id.trim().length>0?req.body.category_id.trim():false;
-       
-    if(id && name && identifier && url && category_id){
+    var imageName = typeof(req.body.imageName) == 'string' && req.body.imageName.trim().length>0?req.body.imageName.trim():'';
+
+    if(id && name && identifier && category_id){
         SubCategory.findById(id,(err,subCategory)=>{
             if(!err && subCategory){
                 subCategory.name = name;
                 subCategory.identifier = identifier;
                 subCategory.isEnabled = isEnabled;
-                subCategory.url = url;
+                subCategory.url = ( url ? url : '/' + identifier);
                 subCategory.category_id = category_id;
+                subCategory.imageName = imageName;
                 
                 Category.findById(category_id,(err,category)=>{
                     if(!err && category){

@@ -12,7 +12,8 @@ var schema = new Schema({
     subCategory_id:{
         type: Schema.Types.ObjectId,
         ref: SubCategory        
-    } 
+    },
+    imageName: {type:String}
 }, { usePushEach: true });
 
 schema.plugin(mongooseUniqueValidator);

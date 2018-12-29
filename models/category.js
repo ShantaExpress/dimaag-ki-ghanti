@@ -7,7 +7,8 @@ var schema = new Schema({
     name: {type: String, required: true},
     identifier: {type: String, required: true},
     isEnabled: {type: Boolean, required: true},
-    url:{type:String}
+    url: {type:String},
+    imageName: {type:String}
 }, { usePushEach: true });
 
 schema.plugin(mongooseUniqueValidator);

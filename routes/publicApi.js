@@ -67,6 +67,12 @@ router.get('/settings/:page', function(req,res,next){
                 },
                 {   header : 'Your Recently Viewed Item',
                     selectionTag: '5c14b038ad23910db4d14dbc',
+                },
+                {   header : 'Offer',
+                    selectionTag: '5c279df6d157f01ac01b2576',
+                },
+                {   header : 'Bombay Dyeing',
+                    selectionTag: '5c279e24d157f01ac01b2577',
                 }
             ];
             break;

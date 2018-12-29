@@ -108,7 +108,8 @@ router.post('/', function (req, res, next) {
                 name: req.body.name,
                 identifier: req.body.identifier,
                 isEnabled: req.body.isEnabled,
-                url: req.body.url
+                url: req.body.url ? req.body.url : '/' + req.body.identifier,
+                imageName: req.body.imageName
             });
             category.save(function(err, result) {
                 if (err) {
@@ -141,7 +142,8 @@ router.put('/:id', function (req, res, next) {
             name: req.body.name,
             identifier: req.body.identifier,
             isEnabled: req.body.isEnabled,
-            url: req.body.url
+            url: req.body.url ? req.body.url : '/' + req.body.identifier,
+            imageName: req.body.imageName
         }},
         function(err, result) {
         if (err) {

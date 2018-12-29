@@ -96,8 +96,8 @@ router.post('/', function (req, res, next) {
     var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var subCategory_id = typeof(req.body.subCategory_id) == 'string' && req.body.subCategory_id.trim().length>0?req.body.subCategory_id.trim():false;
-       
-    if(name && identifier && url && subCategory_id){
+    var imageName = typeof(req.body.imageName) == 'string' && req.body.imageName.trim().length>0?req.body.imageName.trim():'';
+    if(name && identifier && subCategory_id){
          
         var thename =  '^'+name.trim()+'$';
         // db.collection.find({'name': });
@@ -117,7 +117,14 @@ router.post('/', function (req, res, next) {
             else{
                 SubCategory.findById(subCategory_id,(err,subCategory)=>{
                     if(!err && subCategory){
-                        var sectionalCategory = new SectionalCategory({name,identifier,isEnabled,url,subCategory_id});            
+                        var sectionalCategory = new SectionalCategory({
+                            name,
+                            identifier,
+                            isEnabled,
+                            url : (url ? url : '/' + identifier),
+                            subCategory_id,
+                            imageName
+                        });            
                         
                         sectionalCategory.save(function(err, result) {
                             if (err) {
@@ -162,15 +169,17 @@ router.put('/:id', function (req, res, next) {
     var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var subCategory_id = typeof(req.body.subCategory_id) == 'string' && req.body.subCategory_id.trim().length>0?req.body.subCategory_id.trim():false;
-       
-    if(id && name && identifier && url && subCategory_id){
+    var imageName = typeof(req.body.imageName) == 'string' && req.body.imageName.trim().length>0?req.body.imageName.trim():'';
+
+    if(id && name && identifier && subCategory_id){
         SectionalCategory.findById(id,(err,sectionalCategory)=>{
             if(!err && sectionalCategory){
                 sectionalCategory.name = name;
                 sectionalCategory.identifier = identifier;
                 sectionalCategory.isEnabled = isEnabled;
-                sectionalCategory.url = url;
+                sectionalCategory.url = (url ? url : '/' + identifier);
                 sectionalCategory.subCategory_id = subCategory_id;
+                sectionalCategory.imageName = imageName;
                 
                 SubCategory.findById(subCategory_id,(err,subCategory)=>{
                     if(!err && subCategory){
