@@ -165,7 +165,7 @@ router.put('/:id', function (req, res, next) {
     var id = typeof(req.body._id) == 'string' && req.body._id.trim().length>0?req.body._id.trim():false;
     var name = typeof(req.body.name) == 'string' && req.body.name.trim().length>0?req.body.name.trim():false;
     var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier.trim().length>0?req.body.identifier.trim():false;
-    var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
+    var isEnabled = req.body.isEnabled == 'true' || req.body.isEnabled == true?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var category_id = typeof(req.body.category_id) == 'string' && req.body.category_id.trim().length>0?req.body.category_id.trim():false;
     var imageName = typeof(req.body.imageName) == 'string' && req.body.imageName.trim().length>0?req.body.imageName.trim():'';
