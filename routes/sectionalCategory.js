@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-    SectionalCategory.find({}, function(err, sectionalCategories) {
+    SectionalCategory.find(req.query, function(err, sectionalCategories) {
       if (err) {
           return res.status(500).json({
               title: 'An error occurred',

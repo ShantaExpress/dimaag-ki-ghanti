@@ -42,7 +42,7 @@ router.get('/', function(req, res, next) {
     //         error: err
     //     });
     // });
-    Product.find({}, function(err, products) {
+    Product.find(req.query, function(err, products) {
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',

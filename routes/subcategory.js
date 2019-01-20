@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-   SubCategory.find({}, function(err, subCategories) {
+    SubCategory.find(req.query, function(err, subCategories) {
       if (err) {
           return res.status(500).json({
               title: 'An error occurred',

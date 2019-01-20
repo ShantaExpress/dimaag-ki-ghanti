@@ -19,7 +19,10 @@ router.get('/', function(req, res, next) {
             error: {message: 'Invalid Token!'}
         });
     }
-   Category.find({}, function(err, categories) {
+
+    var query = req.query;
+
+    Category.find(query, function(err, categories) {
       if (err) {
           return res.status(500).json({
               title: 'An error occurred',
