@@ -15,6 +15,41 @@ var Category = require('../models/category');
 var Brand = require('../models/brand');
 var Product = require('../models/product');
 
+
+router.post('/updateProduct', function(req, res, next) {
+    Product.find({'identifier':false}, function(err, products) {
+        if (err) {
+            return res.status(500).json({
+                title: 'An error occurred',
+                error: err
+            });
+        }
+        let productsUpdated = [];
+        for(var i = 0; i < products.length; i++) {
+            products[i].identifier = products[i].name.split(' ').join('_');
+            products[i].save(function(err, productUpdated) {
+                if (err) {
+                    return res.status(500).json({
+                        title: 'An error occurred',
+                        error: err
+                    });
+                }
+                productsUpdated.push(productUpdated);
+                if(productsUpdated.length === products.length) {
+                    res.status(200).json({
+                        productsUpdated: productsUpdated
+                    });
+                }
+            });
+        }
+        if(!products.length){
+            res.status(200).json({
+                productsUpdated: products
+            });
+        }
+    });
+});
+
 router.get('/', function(req, res, next) {
     
     var decoded = jwt.decode(req.header('Authorization'));        
@@ -113,7 +148,7 @@ router.post('/', function (req, res, next) {
     }
 
     var name = typeof(req.body.name) == 'string' && req.body.name.trim().length>0?req.body.name.trim():false;
-    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier == 'true'?true:false;
+    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier.trim().length>0?req.body.identifier.trim().length:name.split(' ').join('_');
     var isEnabled = typeof(req.body.isEnabled) == 'string' && req.body.isEnabled == 'true'?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var basePrice = typeof(req.body.basePrice) == 'number' && req.body.basePrice>=0?req.body.basePrice:false;
@@ -208,8 +243,8 @@ router.put('/:id', function (req, res, next) {
     }
 
     var id = typeof(req.body._id) == 'string' && req.body._id.trim().length>0?req.body._id.trim():false;
-    var name = typeof(req.body.name) == 'string' && req.body.name.trim().length>0?req.body.name.trim():false;
-    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier == 'true'?true:false;
+    var name = typeof(req.body.name) == 'string' && req.body.name.trim().length>0?req.body.name.trim():false;    
+    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier.trim().length>0?req.body.identifier.trim().length:name.split(' ').join('_');
     var isEnabled = typeof(req.body.isEnabled) == 'boolean' && req.body.isEnabled == true?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var basePrice = typeof(req.body.basePrice) == 'number' && req.body.basePrice>=0?req.body.basePrice:false;
