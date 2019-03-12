@@ -17,7 +17,7 @@ var Product = require('../models/product');
 
 
 router.post('/updateProduct', function(req, res, next) {
-    Product.find({'identifier':false}, function(err, products) {
+    Product.find({}, function(err, products) {
         if (err) {
             return res.status(500).json({
                 title: 'An error occurred',
@@ -244,7 +244,7 @@ router.put('/:id', function (req, res, next) {
 
     var id = typeof(req.body._id) == 'string' && req.body._id.trim().length>0?req.body._id.trim():false;
     var name = typeof(req.body.name) == 'string' && req.body.name.trim().length>0?req.body.name.trim():false;    
-    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier.trim().length>0?req.body.identifier.trim().length:name.split(' ').join('_');
+    var identifier = typeof(req.body.identifier) == 'string' && req.body.identifier.trim().length>0?req.body.identifier.trim():name.split(' ').join('_');
     var isEnabled = typeof(req.body.isEnabled) == 'boolean' && req.body.isEnabled == true?true:false;
     var url = typeof(req.body.url) == 'string' && req.body.url.trim().length>0?req.body.url.trim():false;
     var basePrice = typeof(req.body.basePrice) == 'number' && req.body.basePrice>=0?req.body.basePrice:false;
