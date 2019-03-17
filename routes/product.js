@@ -234,7 +234,7 @@ router.post('/', function (req, res, next) {
 
 router.put('/:id', function (req, res, next) {
    
-    var decoded = jwt.decode(req.header('Authorization'));        
+    var decoded = jwt.decode(req.header('Authorization'));
     if(!decoded){
         return res.status(401).json({
             title: 'Not Authenticated',

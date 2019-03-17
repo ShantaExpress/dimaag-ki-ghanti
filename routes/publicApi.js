@@ -28,10 +28,32 @@ const Models = {
     'Banner': Banner,
     'Product': Product
 }
+
+/* POST call to fetch filter list */
+router.post('/post/:api', function(req, res, next){
+    // req.params.api
+    if(!req.params.api || Object.keys(Models).indexOf(req.params.api) == -1){        
+        res.status(400).json({
+            error: 'Invalid Api'
+        });
+    }
+    let payload = req.body;
+    Models[req.params.api].find(payload, function(err, data) {
+        if (err) {
+            return res.status(500).json({
+                title: 'An error occurred',
+                error: err
+            });
+        }
+        res.status(200).json({
+            data: data
+        });
+    });
+});
+
 /* GET listing of generic api */
 router.get('/get/:api', function(req, res, next) {
     // req.params.api
-    let model;
     if(!req.params.api || Object.keys(Models).indexOf(req.params.api) == -1){        
         res.status(400).json({
             error: 'Invalid Api'
@@ -51,7 +73,6 @@ router.get('/get/:api', function(req, res, next) {
           data: data
       });
   });
-  
 });
 
 /* get page settings */
