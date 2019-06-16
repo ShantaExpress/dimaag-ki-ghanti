@@ -8,13 +8,14 @@ const multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 let logger = require('../utils/logger');
+let authValid = require('../utils/auth');
 
 var User = require('../models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
     var decoded = jwt.decode(req.header('Authorization'));        
-    if(!decoded){
+    if(!authValid(decoded)) {
         return res.status(401).json({
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
@@ -37,7 +38,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
     var decoded = jwt.decode(req.header('Authorization'));        
-    if(!decoded){
+    if(!authValid(decoded)) {
         return res.status(401).json({
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
@@ -59,7 +60,7 @@ router.get('/:id', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
     var decoded = jwt.decode(req.header('Authorization'));        
-    if(!decoded){
+    if(!authValid(decoded)) {
         return res.status(401).json({
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
@@ -82,7 +83,7 @@ router.delete('/:id', function(req, res, next) {
 
 router.post('/', function (req, res, next) {
     // var decoded = jwt.decode(req.header('Authorization'));        
-    // if(!decoded){
+    // if(!authValid(decoded)) {
     //     return res.status(401).json({
     //         title: 'Not Authenticated',
     //         error: {message: 'Invalid Token!'}
@@ -140,7 +141,7 @@ router.post('/', function (req, res, next) {
 
 router.put('/:id', function (req, res, next) {
     var decoded = jwt.decode(req.header('Authorization'));        
-    if(!decoded){
+    if(!authValid(decoded)) {
         return res.status(401).json({
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
@@ -236,7 +237,7 @@ router.post('/logout',function(req,res,next){
 router.get('/logged/user',function(req,res,next){
     var decoded = jwt.decode(req.header('Authorization'));
     logger.info('decoded:' + JSON.stringify(decoded));
-    if(!decoded){
+    if(!authValid(decoded)) {
         return res.status(401).json({
             title: 'Not Authenticated',
             error: {message: 'Invalid Token!'}
